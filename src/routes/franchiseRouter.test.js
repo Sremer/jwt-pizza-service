@@ -18,12 +18,16 @@ beforeAll(async () => {
 
 test('get franchises', async () => {
     const getFranRes = await request(app).get('/api/franchise').send();
+    await createFranchise();
     expect(getFranRes.status).toBe(200);
+    expect(getFranRes.body.length).toBeGreaterThan(0);
 });
 
 test('get user franchises', async () => {
+    await createFranchise();
     const getUserFanRes = await request(app).get('/api/franchise/' + testUserId).set('Authorization', `Bearer ${testUserAuthToken}`).send();
     expect(getUserFanRes.status).toBe(200);
+    expect(getUserFanRes.body.length).toBeGreaterThan(0);
 });
 
 test('delete franchises', async () => {
