@@ -80,4 +80,6 @@ const createAdminUser = async () => {
     return user;
 }
 
+module.exports = createAdminUser;
+
 
