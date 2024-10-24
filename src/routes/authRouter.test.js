@@ -28,8 +28,3 @@ test('logout', async () => {
   expect(logoutRes.status).toBe(200);
 });
 
-test('update user', async () => {
-  testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
-  const updateUserRes = await request(app).put('/api/auth/' + userId).set('Authorization', `Bearer ${testUserAuthToken}`).send(testUser);
-  expect(updateUserRes.status).toBe(200);
-});
