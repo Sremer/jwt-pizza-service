@@ -3,14 +3,12 @@ const app = require('../service');
 
 let testUser;
 let testUserAuthToken;
-let userId;
 
 beforeAll(async () => {
   testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
   testUser.email = Math.random().toString(36).substring(2, 12) + '@test.com';
   const registerRes = await request(app).post('/api/auth').send(testUser);
   testUserAuthToken = registerRes.body.token;
-  userId = registerRes.body.user.id;
 });
 
 test('login', async () => {
