@@ -81,17 +81,17 @@ class Metrics {
                 buf.addMetric('user', 'active', this.activeUsers);
             }
             
-            const purchaseMetrics = (buf) => {}
-            
-            const authMetrics = (buf) => {}
+            // const purchaseMetrics = (buf) => {}
+            //
+            // const authMetrics = (buf) => {}
 
             try {
                 const buf = new MetricBuilder();
                 httpMetrics(buf);
                 systemMetrics(buf);
                 userMetrics(buf);
-                purchaseMetrics(buf);
-                authMetrics(buf);
+                // purchaseMetrics(buf);
+                // authMetrics(buf);
         
                 const metrics = buf.toString('\n');
                 this.sendMetricToGrafana(metrics);
