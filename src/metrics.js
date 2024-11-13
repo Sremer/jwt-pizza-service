@@ -83,7 +83,26 @@ class Metrics {
         });
         next();
     }
-
+    
+    serviceLatencyTracker(req, res, next) {
+        const startTime = Date.now();
+        res.on('finish', () => {
+            const endTime = Date.now();
+            const latency = endTime - startTime;
+            this.sendMetricToGrafana(`service_latency,source=${config.metrics.source} latency=${latency}`);
+        });
+        next();
+    }
+    
+    async pizzaCreationLatencyTracker(fn, ...args) {
+        const startTime = Date.now();
+        const result = await fn(...args);
+        const endTime = Date.now();
+        const latency = endTime - startTime;
+        this.sendMetricToGrafana(`pizza_creation_latency,source=${config.metrics.source} latency=${latency}`);
+        return result;
+    }
+    
     sendMetricsPeriodically(period) {
         const timer = setInterval(() => {
             const httpMetrics = (buf) => {
