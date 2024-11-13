@@ -73,8 +73,10 @@ class Metrics {
     purchaseTracker(req, res, next) {
         res.on('finish', () => {
             if (res.statusCode === 200) {
-                this.totalPurchases += res.order.items.length;
-                this.totalRevenue += res.order.items.reduce((sum, item) => sum + item.price, 0);
+                if (req.body.items.length > 0) {
+                    this.totalPurchases += req.body.items.length;
+                    this.totalRevenue += req.body.items.reduce((sum, item) => sum + item.price, 0);
+                }
             } else if (res.statusCode === 500) {
                 this.failedCreations++;
             }
