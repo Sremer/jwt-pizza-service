@@ -16,6 +16,11 @@ class Metrics {
         this.authSuccess = 0;
         this.authFailure = 0;
         
+        // Initialize purchase metrics
+        this.totalPurchases = 0;
+        this.failedCreations = 0;
+        this.totalRevenue = 0;
+        
         this.sendMetricsPeriodically(1000);
     }
 
@@ -61,6 +66,15 @@ class Metrics {
         }
         next();
     }
+    
+    trackPurchase(order) {
+        this.totalPurchases += order.items.length;
+        this.totalRevenue += order.items.reduce((sum, item) => sum + item.price, 0);
+    }
+    
+    addCreationError() {
+        this.failedCreations++;
+    }
 
     sendMetricsPeriodically(period) {
         const timer = setInterval(() => {
@@ -81,8 +95,12 @@ class Metrics {
                 buf.addMetric('user', 'active', this.activeUsers);
             }
             
-            // const purchaseMetrics = (buf) => {}
-            //
+            const purchaseMetrics = (buf) => {
+                buf.addMetric('purchase', 'total', this.totalPurchases, { status: 'sold' });
+                buf.addMetric('purchase', 'total', this.failedCreations, { status: 'failed' });
+                buf.addMetric('purchase', 'revenue', this.totalRevenue);
+            }
+            
             // const authMetrics = (buf) => {}
 
             try {
@@ -90,7 +108,7 @@ class Metrics {
                 httpMetrics(buf);
                 systemMetrics(buf);
                 userMetrics(buf);
-                // purchaseMetrics(buf);
+                purchaseMetrics(buf);
                 // authMetrics(buf);
         
                 const metrics = buf.toString('\n');
