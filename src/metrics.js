@@ -58,23 +58,27 @@ class Metrics {
         }
         next();
     }
-    
+
     authTracker(req, res, next) {
-        if (res.statusCode === 200) {
-            this.authSuccess++;
-        } else {
-            this.authFailure++;
-        }
+        res.on('finish', () => {
+            if (res.statusCode === 200) {
+                this.authSuccess++;
+            } else {
+                this.authFailure++;
+            }
+        });
         next();
     }
     
-    trackPurchase(req, res, next) {
-        if (res.statusCode === 200) {
-            this.totalPurchases += res.order.items.length;
-            this.totalRevenue += res.order.items.reduce((sum, item) => sum + item.price, 0);
-        } else {
-            this.failedCreations++;
-        }
+    purchaseTracker(req, res, next) {
+        res.on('finish', () => {
+            if (res.statusCode === 200) {
+                this.totalPurchases += res.order.items.length;
+                this.totalRevenue += res.order.items.reduce((sum, item) => sum + item.price, 0);
+            } else if (res.statusCode === 500) {
+                this.failedCreations++;
+            }
+        });
         next();
     }
 

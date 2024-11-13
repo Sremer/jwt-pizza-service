@@ -77,6 +77,7 @@ orderRouter.get(
 orderRouter.post(
   '/',
   authRouter.authenticateToken,
+  metrics.purchaseTracker.bind(metrics),
   asyncHandler(async (req, res) => {
     const orderReq = req.body;
     const order = await DB.addDinerOrder(req.user, orderReq);
@@ -91,8 +92,7 @@ orderRouter.post(
     } else {
       res.status(500).send({ message: 'Failed to fulfill order at factory', reportUrl: j.reportUrl });
     }
-  }), 
-  metrics.trackPurchase
+  }),
 );
 
 module.exports = orderRouter;
