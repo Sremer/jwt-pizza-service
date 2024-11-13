@@ -103,7 +103,10 @@ class Metrics {
                 buf.addMetric('purchase', 'revenue', this.totalRevenue);
             }
             
-            // const authMetrics = (buf) => {}
+            const authMetrics = (buf) => {
+                buf.addMetric('auth', 'total', this.authSuccess, { status: 'success' });
+                buf.addMetric('auth', 'total', this.authFailure, { status: 'failure' });
+            }
 
             try {
                 const buf = new MetricBuilder();
@@ -111,7 +114,7 @@ class Metrics {
                 systemMetrics(buf);
                 userMetrics(buf);
                 purchaseMetrics(buf);
-                // authMetrics(buf);
+                authMetrics(buf);
         
                 const metrics = buf.toString('\n');
                 this.sendMetricToGrafana(metrics);
