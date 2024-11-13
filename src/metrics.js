@@ -41,7 +41,9 @@ class Metrics {
         this.activeUsers++;
     }
     removeActiveUser() {
-        this.activeUsers--;
+        if (this.activeUsers > 0) {
+            this.activeUsers--;
+        }
     }
     
     requestTracker(req, res, next) {
@@ -58,22 +60,22 @@ class Metrics {
     }
     
     authTracker(req, res, next) {
-        if (req) {
+        if (res.statusCode === 200) {
             this.authSuccess++;
-        }
-        if (req.authFailure) {
+        } else {
             this.authFailure++;
         }
         next();
     }
     
-    trackPurchase(order) {
-        this.totalPurchases += order.items.length;
-        this.totalRevenue += order.items.reduce((sum, item) => sum + item.price, 0);
-    }
-    
-    addCreationError() {
-        this.failedCreations++;
+    trackPurchase(req, res, next) {
+        if (res.statusCode === 200) {
+            this.totalPurchases += res.order.items.length;
+            this.totalRevenue += res.order.items.reduce((sum, item) => sum + item.price, 0);
+        } else {
+            this.failedCreations++;
+        }
+        next();
     }
 
     sendMetricsPeriodically(period) {
